@@ -9,17 +9,299 @@ load_dotenv()
 # Configure OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Configure Streamlit theme
+st.set_page_config(
+    page_title="MiaChat",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Custom CSS for dark theme
+st.markdown("""
+<style>
+    /* Main theme colors */
+    :root {
+        --background-color: #1E1E1E;
+        --secondary-bg: #2D2D2D;
+        --text-color: #E0E0E0;
+        --yellow-brand: #FFD700;
+        --accent-color: #4A4A4A;
+        --success-color: #4CAF50;
+        --error-color: #FF5252;
+    }
+
+    /* Global styles */
+    .main {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        padding: 2rem;
+    }
+
+    .stApp {
+        background-color: var(--background-color);
+    }
+
+    /* Sidebar styling */
+    .css-1d391kg {
+        background-color: var(--secondary-bg);
+    }
+
+    .sidebar .sidebar-content {
+        background-color: var(--secondary-bg);
+    }
+
+    /* Headers */
+    h1, h2, h3 {
+        color: var(--yellow-brand) !important;
+        font-weight: 600;
+    }
+
+    /* Text areas */
+    .stTextArea textarea {
+        background-color: var(--secondary-bg);
+        color: var(--text-color);
+        border: 1px solid var(--accent-color);
+        border-radius: 5px;
+    }
+
+    .stTextArea textarea:focus {
+        border-color: var(--yellow-brand);
+        box-shadow: 0 0 0 1px var(--yellow-brand);
+    }
+
+    /* Chat messages */
+    .chat-message {
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        background-color: #000000;
+        border-left: 5px solid var(--yellow-brand);
+        color: #000000;
+    }
+
+    .user-message {
+        background-color: #FFFFFF;
+        border-left: 5px solid var(--yellow-brand);
+        color: #000000;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .assistant-message {
+        background-color: #F5F5F5;
+        border-left: 5px solid #FFB700;
+        color: #000000;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Message headers */
+    .chat-message b {
+        color: #000000;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-weight: 600;
+    }
+
+    /* Message content */
+    .chat-message div:last-child {
+        margin-top: 0.5rem;
+        line-height: 1.5;
+        color: #000000;
+    }
+
+    /* Buttons */
+    .stButton button {
+        background-color: var(--yellow-brand);
+        color: #000000;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .stButton button:hover {
+        background-color: #FFE44D;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
+    }
+
+    /* Quick replies */
+    .quick-reply-container {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .quick-reply {
+        background-color: var(--secondary-bg);
+        color: var(--yellow-brand);
+        border: 1px solid var(--yellow-brand);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .quick-reply:hover {
+        background-color: var(--yellow-brand);
+        color: var(--background-color);
+    }
+
+    /* Input container */
+    .input-container {
+        background-color: var(--secondary-bg);
+        padding: 1rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+    }
+
+    /* Selectbox */
+    .stSelectbox {
+        background-color: var(--secondary-bg);
+    }
+
+    .stSelectbox > div > div {
+        background-color: var(--secondary-bg);
+        color: var(--text-color);
+    }
+
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: var(--secondary-bg);
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        color: var(--text-color);
+    }
+
+    .stTabs [aria-selected="true"] {
+        color: var(--yellow-brand);
+    }
+
+    /* Status messages */
+    .success-message {
+        color: var(--success-color);
+        background-color: rgba(76, 175, 80, 0.1);
+        padding: 0.5rem;
+        border-radius: 4px;
+    }
+
+    .error-message {
+        color: var(--error-color);
+        background-color: rgba(255, 82, 82, 0.1);
+        padding: 0.5rem;
+        border-radius: 4px;
+    }
+
+    /* Input area */
+    .stTextInput input {
+        color: #000000;
+        background-color: #FFFFFF;
+        border: 1px solid var(--yellow-brand);
+    }
+
+    .stTextInput input:focus {
+        border-color: var(--yellow-brand);
+        box-shadow: 0 0 0 1px var(--yellow-brand);
+    }
+
+    /* Title styling */
+    .title {
+        font-family: 'Arial', sans-serif;
+        font-weight: 700;
+        color: var(--yellow-brand);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .mia-branding {
+        font-size: 2.5rem;
+        letter-spacing: 1px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Yellow.ai Platform Configuration
+YELLOW_AI_CONFIG = {
+    "channels": [
+        "WhatsApp",
+        "Facebook Messenger",
+        "Instagram",
+        "Web Chat",
+        "IVR",
+        "SMS"
+    ],
+    "features": {
+        "customer_support": {
+            "name": "Customer Support Automation",
+            "description": "AI-driven customer support with intelligent routing"
+        },
+        "sales_automation": {
+            "name": "Sales Automation",
+            "description": "Lead generation and sales process automation"
+        },
+        "hr_automation": {
+            "name": "HR Process Automation",
+            "description": "Streamline HR workflows and employee engagement"
+        },
+        "demo_booking": {
+            "name": "Demo Booking",
+            "description": "Schedule product demonstrations and sales calls"
+        }
+    },
+    "integrations": {
+        "crm": ["Salesforce", "HubSpot"],
+        "erp": ["SAP", "Oracle"],
+        "ticketing": ["Zendesk", "Freshdesk"],
+        "communication": ["Twilio", "MessageBird"]
+    }
+}
+
+# System Prompt
+YELLOW_AI_PROMPT = """You are MiaChat, an AI assistant specifically trained for Yellow.ai platform support.
+
+Key Capabilities:
+1. Provide comprehensive information about Yellow.ai's products and services
+2. Guide users through Yellow.ai's features and capabilities:
+   - Conversational AI Bots
+   - Omnichannel Support
+   - Orch LLM (Proprietary orchestration engine)
+   - Customer Experience Automation
+   - Live Agent Handoff
+   - AI-Powered Analytics
+   - Enterprise System Integrations
+   - Generative AI Capabilities
+
+3. Assist with demo booking and platform inquiries
+4. Explain technical concepts in an accessible manner
+5. Provide integration guidance
+6. Share analytics and reporting capabilities
+
+Guidelines:
+- Maintain a professional and helpful tone
+- Provide accurate platform information
+- Guide users through demo booking process
+- Explain technical features clearly
+- Handle complex queries with detailed responses
+- Facilitate smooth handoffs when needed
+
+Remember: You are Mia, an expert in Yellow.ai's platform and should focus on helping users understand and utilize its capabilities effectively. Always introduce yourself as Mia and maintain a friendly, professional demeanor."""
+
 # ----------------------------
 # Helper Functions
 # ----------------------------
 
 def get_chat_response(message, conversation_history, api_provider, model):
     """
-    Get response from OpenAI API or Claude API
+    Get response from OpenAI API or Claude API with Yellow.ai context
     """
     if api_provider == "gpt":
         try:
-            messages = []
+            messages = [{"role": "system", "content": YELLOW_AI_PROMPT}]
+            
             # Convert conversation history to OpenAI format
             for msg in conversation_history.split("\n"):
                 if msg.startswith("User:"):
@@ -48,37 +330,45 @@ def get_chat_response(message, conversation_history, api_provider, model):
 
 def generate_quick_replies(conversation_context):
     """
-    Generate contextual quick replies based on the current conversation
+    Generate contextual quick replies based on Yellow.ai platform features in first person
     """
     if not conversation_context:
-        # Initial quick replies for new chat
+        # Initial quick replies for new chat in first person
         return [
-            "Tell me about YellowChat",
-            "How can you help me?",
-            "What can you do?"
+            "Hi Mia, tell me about Yellow.ai",
+            "I'd like to book a demo with you",
+            "Can you show me the integration options?"
         ]
     
     try:
-        # Construct a prompt that generates contextual quick replies
-        prompt = f"""Based on this conversation, generate 3 likely follow-up messages or questions the user might want to ask. 
-        Make them specific to the context and natural to the flow of conversation.
+        # Construct a prompt that generates first-person quick replies for Yellow.ai
+        prompt = f"""Based on this conversation about Yellow.ai platform, generate 3 likely follow-up questions or actions from the user's perspective in first person (using I, my, me).
+        The assistant's name is Mia, so include personal addressing where appropriate.
+
+        Focus on Yellow.ai's key features:
+        - Conversational AI capabilities
+        - Omnichannel support
+        - Integration options
+        - Demo booking
+        - Platform features
         
-        Conversation:
+        Current Conversation:
         {conversation_context}
         
-        Generate 3 short, specific quick replies that would be natural for the user to say next.
-        Consider:
-        - Questions that would clarify or expand on the last response
-        - Natural follow-up requests
-        - Specific actions the user might want to take
+        Generate 3 short, specific quick replies in first person that a user would naturally say. Examples:
+        - "Mia, can you tell me more about..."
+        - "I'd like your help with..."
+        - "Could you explain to me..."
+        - "Show me how to..."
+        - "Help me understand..."
         
-        Format each reply to be concise (max 6-8 words) and conversational.
+        Make responses conversational and personal, addressing Mia directly where appropriate.
         """
         
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are an AI that generates relevant, contextual quick reply suggestions for a chat interface."},
+                {"role": "system", "content": "You are an AI that generates first-person quick reply suggestions from the user's perspective, addressing the AI assistant named Mia."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
@@ -90,10 +380,50 @@ def generate_quick_replies(conversation_context):
         
     except Exception as e:
         return [
-            "Could you explain that further?",
-            "Tell me more",
-            "What are my options?"
+            "Mia, tell me more about the features",
+            "Help me set up integrations",
+            "I'd like to schedule a demo"
         ]
+
+def handle_demo_booking(user_info):
+    """
+    Handle Yellow.ai platform demo booking requests
+    """
+    try:
+        # In a real implementation, this would integrate with Yellow.ai's booking system
+        return {
+            "status": "success",
+            "message": "Thank you for your interest in Yellow.ai! Your demo request has been received.",
+            "next_steps": [
+                "Our team will contact you shortly to schedule the demo",
+                "You'll receive an email confirmation",
+                "Feel free to ask any questions about Yellow.ai while you wait"
+            ]
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error booking demo: {str(e)}",
+            "next_steps": [
+                "Please try again later",
+                "Contact our support team for assistance"
+            ]
+        }
+
+def get_integration_info(integration_type):
+    """
+    Provide information about Yellow.ai's integration capabilities
+    """
+    return YELLOW_AI_CONFIG["integrations"].get(integration_type, [])
+
+def get_feature_info(feature_name):
+    """
+    Get detailed information about Yellow.ai platform features
+    """
+    return YELLOW_AI_CONFIG["features"].get(feature_name, {
+        "name": "Feature not found",
+        "description": "Information not available"
+    })
 
 # ----------------------------
 # Initialize Session State
@@ -109,14 +439,16 @@ if "api_provider" not in st.session_state:
 if "model" not in st.session_state:
     st.session_state.model = "gpt-3.5-turbo"
 if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []  # List to store multiple conversations
+    st.session_state.chat_history = []
+if "demo_requests" not in st.session_state:
+    st.session_state.demo_requests = []
 
 # ----------------------------
 # Sidebar: Chat History & Settings
 # ----------------------------
 
 with st.sidebar:
-    st.title("YellowChat")
+    st.markdown('<h1 class="title mia-branding">MiaChat</h1>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.subheader("Settings")
